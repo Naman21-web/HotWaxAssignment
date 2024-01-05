@@ -12,11 +12,6 @@ const db = mysql.createPool({
     database:'assignment1'
 })
 
-// db.query('Select * from product',(res,err) => {
-//     console.log(res);
-//     console.log(err);
-// })
-
 app.get("/", (req, res) =>
   res.send(
     `<h1>Site is Working. click <a href=${process.env.FRONTEND_URL}>here</a> to visit frontend.</h1>`
@@ -96,7 +91,6 @@ app.post('/order',(req,res) => {
                 }
                 const order_id = crypto.randomBytes(10).toString("hex");
                 console.log(restToken);
-                // const insertorder = `INSERT INTO order_header SET ?`;
                 const insertorder = `INSERT INTO order_header (order_id,
                     order_name,
                     placed_date,
@@ -134,7 +128,6 @@ app.post('/order',(req,res) => {
 })
 
 app.get('/order',(req,res) => {
-    // db.query('SELECT * FROM order_header,order_item where order_header.order_id=order_item.order_id',(err,result) => {
         db.query(`SELECT *,(SELECT JSON_ARRAYAGG( JSON_OBJECT(
             'order_item_seq_id', oi.order_item_seq_id,
             'product_id', oi.product_id,
@@ -160,7 +153,6 @@ FROM order_item oi
 
 app.get('/order/:order_id',(req,res) => {
     const {order_id} = req.params;
-    // db.query('SELECT * FROM order_item where order_id = ?',[order_id],(err,result) => {
     db.query(`SELECT *,(SELECT JSON_ARRAYAGG( JSON_OBJECT(
             'order_item_seq_id', oi.order_item_seq_id,
             'product_id', oi.product_id,
@@ -197,7 +189,6 @@ app.post('/order/:order_id',(req,res) => {
     if(!order_item_seq_id || !product_id || !item_description || !quantity || !unit_amount || !item_type_enum_id){
         res.status.apply(400).json({msg:"Provide Complete Data"});
     }
-    // const data = req.body;
     const insertorderitem = `INSERT INTO order_item (order_id,
         order_item_seq_id,
         product_id,
